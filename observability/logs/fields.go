@@ -18,6 +18,10 @@ func UserId(id string) zap.Field {
 	return zap.String("user_id", id)
 }
 
+func Component(comp string) zap.Field {
+	return zap.String("Component", comp)
+}
+
 func Err(err error) zap.Field {
 	return zap.Error(err)
 }
