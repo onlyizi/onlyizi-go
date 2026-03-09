@@ -57,3 +57,7 @@ func UserAgent(agent string) zap.Field {
 func ContentLength(length int64) zap.Field {
 	return zap.Int64("content_length", length)
 }
+
+func ErrorCode(code string) zap.Field {
+	return zap.String("error_code", code)
+}

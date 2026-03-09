@@ -14,6 +14,7 @@ func NewRouter(routes ...RegisterRoutes) *gin.Engine {
 
 	router.Use(gin.Recovery())
 	router.Use(GinMiddleware(middlewares.ObservabilityMiddleware))
+	router.Use(middlewares.ErrorHandlerMiddleware())
 
 	router.GET("/health", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{

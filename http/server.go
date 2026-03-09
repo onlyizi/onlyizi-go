@@ -31,7 +31,9 @@ func (s *Server) Name() string {
 }
 
 func (s *Server) Start() error {
-	logs.L().Info("Http server starting")
+	serverAddr := "localhost" + s.server.Addr
+
+	logs.L().Info("Http server starting: " + serverAddr)
 
 	err := s.server.ListenAndServe()
 
