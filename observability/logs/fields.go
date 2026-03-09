@@ -22,6 +22,10 @@ func Component(comp string) zap.Field {
 	return zap.String("Component", comp)
 }
 
+func Field(key string, value any) zap.Field {
+	return zap.Any(key, value)
+}
+
 func Err(err error) zap.Field {
 	return zap.Error(err)
 }

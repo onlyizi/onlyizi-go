@@ -2,10 +2,12 @@ package main
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 
 	"github.com/onlyizi/onlyizi-go/app"
+	"github.com/onlyizi/onlyizi-go/config"
 	"github.com/onlyizi/onlyizi-go/errors"
 	onlyiziHttp "github.com/onlyizi/onlyizi-go/http"
 	"github.com/onlyizi/onlyizi-go/observability"
@@ -31,15 +33,21 @@ Fluxo de inicialização:
 */
 
 func main() {
+	// --------------------------------------------------
+	// Inicializa variáveis de ambiente
+	// --------------------------------------------------
+	config.LoadEnv(".env.example")
+
+	service := config.ServiceConfig()
+	httpCfg := config.HTTPConfig()
 
 	// --------------------------------------------------
 	// Inicializa observabilidade
 	// --------------------------------------------------
-
 	err := observability.Init(observability.Config{
-		ServiceName: "example-service",
-		Version:     "0.1.0",
-		Environment: "development",
+		ServiceName: service.Name,
+		Version:     service.Version,
+		Environment: service.Environment,
 	})
 	if err != nil {
 		panic(err)
@@ -48,17 +56,15 @@ func main() {
 	// --------------------------------------------------
 	// Cria servidor HTTP
 	// --------------------------------------------------
-
 	httpServer := onlyiziHttp.NewServer(
-		"example-http",
-		":8080",
+		service.Name+"-http",
+		":"+strconv.Itoa(httpCfg.Port),
 		registerRoutes,
 	)
 
 	// --------------------------------------------------
 	// Executa serviços
 	// --------------------------------------------------
-
 	app.Run(httpServer)
 }
 
