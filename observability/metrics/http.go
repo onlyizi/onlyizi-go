@@ -13,6 +13,7 @@ var (
 )
 
 func InitHTTP(serviceName string) error {
+
 	meter := Meter(serviceName)
 
 	var err error
@@ -51,6 +52,5 @@ func RecordHTTPRequest(
 	}
 
 	httpRequestsTotal.Add(ctx, 1, metricapi.WithAttributes(attrs...))
-
 	httpDuration.Record(ctx, duration, metricapi.WithAttributes(attrs...))
 }

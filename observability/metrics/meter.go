@@ -8,10 +8,10 @@ import (
 	metricsdk "go.opentelemetry.io/otel/sdk/metric"
 )
 
-// Initialize Otel meter
 var meterProvider *metricsdk.MeterProvider
 
 func Init() error {
+
 	exporter, err := prometheus.New()
 	if err != nil {
 		return err

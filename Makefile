@@ -1,4 +1,4 @@
-MAIN_PATH=cmd/main.go
+MAIN_PATH=cmd/example.go
 
 run:
 	go run $(MAIN_PATH)
