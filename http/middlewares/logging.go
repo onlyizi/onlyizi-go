@@ -6,6 +6,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/onlyizi/onlyizi-go/observability/logs"
+	"github.com/onlyizi/onlyizi-go/observability/metrics"
 )
 
 func ObservabilityMiddleware(next http.Handler) http.Handler {
@@ -40,6 +41,15 @@ func ObservabilityMiddleware(next http.Handler) http.Handler {
 		next.ServeHTTP(rw, r.WithContext(ctx))
 
 		duration := time.Since(start)
+
+		// 🔹 MÉTRICAS
+		metrics.RecordHTTPRequest(
+			ctx,
+			r.Method,
+			r.URL.Path,
+			rw.status,
+			float64(duration.Milliseconds()),
+		)
 
 		logger.Info("request completed",
 			logs.Method(r.Method),

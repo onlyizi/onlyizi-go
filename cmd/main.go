@@ -8,6 +8,7 @@ import (
 	apperrors "github.com/onlyizi/onlyizi-go/errors"
 	onlyiziHttp "github.com/onlyizi/onlyizi-go/http"
 	"github.com/onlyizi/onlyizi-go/observability/logs"
+	"github.com/onlyizi/onlyizi-go/observability/metrics"
 )
 
 func main() {
@@ -17,9 +18,12 @@ func main() {
 		Version:     "0.1.0",
 	})
 
+	metrics.Init()
+	metrics.InitHTTP("Onlyizi Library")
+
 	httpServer := onlyiziHttp.NewServer(
 		"Onlyizi Library server",
-		":3001",
+		":8080",
 		testRoutes,
 	)
 
