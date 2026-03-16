@@ -11,6 +11,7 @@ import (
 	"github.com/onlyizi/onlyizi-go/errors"
 	onlyiziHttp "github.com/onlyizi/onlyizi-go/http"
 	"github.com/onlyizi/onlyizi-go/infra/postgres"
+	"github.com/onlyizi/onlyizi-go/infra/redis"
 	"github.com/onlyizi/onlyizi-go/observability"
 )
 
@@ -68,6 +69,7 @@ func main() {
 	// --------------------------------------------------
 	app.Run(
 		postgres.New(),
+		redis.New(),
 		httpServer,
 	)
 }
