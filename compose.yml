@@ -1,0 +1,18 @@
+services:
+  example-service:
+    container_name: onlyizi-example
+    build: .
+    restart: unless-stopped
+
+    env_file:
+      - .env.example
+
+    ports:
+      - "8080:8080"
+
+    networks:
+      - onlyizi-observability
+
+networks:
+  onlyizi-observability:
+    external: true
