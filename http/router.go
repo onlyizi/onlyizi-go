@@ -10,10 +10,12 @@ import (
 
 type RegisterRoutes func(*gin.Engine)
 
-func NewRouter(routes ...RegisterRoutes) *gin.Engine {
+func NewRouter(cors middlewares.CORSConfig, routes ...RegisterRoutes) *gin.Engine {
 	router := gin.New()
 
 	router.Use(gin.Recovery())
+
+	router.Use(GinMiddleware(middlewares.CORSMiddleware(cors)))
 	router.Use(GinMiddleware(middlewares.ObservabilityMiddleware))
 	router.Use(middlewares.ErrorHandlerMiddleware())
 
@@ -27,6 +29,7 @@ func NewRouter(routes ...RegisterRoutes) *gin.Engine {
 }
 
 func standardRoutes(router *gin.Engine) {
+
 	router.GET("/health", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"status": "ok",
