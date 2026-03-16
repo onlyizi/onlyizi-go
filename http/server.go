@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/http"
 
+	"github.com/onlyizi/onlyizi-go/http/middlewares"
 	"github.com/onlyizi/onlyizi-go/observability/logs"
 )
 
@@ -12,8 +13,14 @@ type Server struct {
 	server *http.Server
 }
 
-func NewServer(name, addr string, routes ...RegisterRoutes) *Server {
-	router := NewRouter(routes...)
+func NewServer(
+	name string,
+	addr string,
+	cors middlewares.CORSConfig,
+	routes ...RegisterRoutes,
+) *Server {
+
+	router := NewRouter(cors, routes...)
 
 	s := &http.Server{
 		Addr:    addr,

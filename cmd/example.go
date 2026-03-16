@@ -10,6 +10,7 @@ import (
 	"github.com/onlyizi/onlyizi-go/config"
 	"github.com/onlyizi/onlyizi-go/errors"
 	onlyiziHttp "github.com/onlyizi/onlyizi-go/http"
+	"github.com/onlyizi/onlyizi-go/http/middlewares"
 	"github.com/onlyizi/onlyizi-go/infra/postgres"
 	"github.com/onlyizi/onlyizi-go/infra/redis"
 	"github.com/onlyizi/onlyizi-go/observability"
@@ -58,9 +59,27 @@ func main() {
 	// --------------------------------------------------
 	// Cria servidor HTTP
 	// --------------------------------------------------
+	cors := middlewares.CORSConfig{
+		AllowOrigins: []string{
+			"http://localhost:3000",
+		},
+		AllowMethods: []string{
+			"GET",
+			"POST",
+			"PUT",
+			"DELETE",
+			"OPTIONS",
+		},
+		AllowHeaders: []string{
+			"Content-Type",
+			"Authorization",
+		},
+		AllowCredentials: true,
+	}
 	httpServer := onlyiziHttp.NewServer(
 		service.Name+"-http",
 		":"+strconv.Itoa(httpCfg.Port),
+		cors,
 		registerRoutes,
 	)
 
