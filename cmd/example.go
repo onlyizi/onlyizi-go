@@ -10,6 +10,7 @@ import (
 	"github.com/onlyizi/onlyizi-go/config"
 	"github.com/onlyizi/onlyizi-go/errors"
 	onlyiziHttp "github.com/onlyizi/onlyizi-go/http"
+	"github.com/onlyizi/onlyizi-go/infra/postgres"
 	"github.com/onlyizi/onlyizi-go/observability"
 )
 
@@ -65,7 +66,10 @@ func main() {
 	// --------------------------------------------------
 	// Executa serviços
 	// --------------------------------------------------
-	app.Run(httpServer)
+	app.Run(
+		postgres.New(),
+		httpServer,
+	)
 }
 
 /*
