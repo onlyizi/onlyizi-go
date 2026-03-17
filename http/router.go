@@ -36,5 +36,9 @@ func standardRoutes(router *gin.Engine) {
 		})
 	})
 
-	router.GET("/metrics", gin.WrapH(metrics.Handler()))
+	router.GET(
+		"/metrics",
+		middlewares.MetricsIPAllowlist([]string{"127.0.0.1", "::1"}),
+		gin.WrapH(metrics.Handler()),
+	)
 }
