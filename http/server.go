@@ -2,7 +2,7 @@ package http
 
 import (
 	"context"
-	"net/http"
+	stdHttp "net/http"
 
 	"github.com/onlyizi/onlyizi-go/http/middlewares"
 	"github.com/onlyizi/onlyizi-go/observability/logs"
@@ -10,7 +10,10 @@ import (
 
 type Server struct {
 	name   string
-	server *http.Server
+	addr   string
+	cors   middlewares.CORSConfig
+	routes []RegisterRoutes
+	server *stdHttp.Server
 }
 
 func NewServer(
@@ -19,14 +22,6 @@ func NewServer(
 	cors middlewares.CORSConfig,
 	routes ...RegisterRoutes,
 ) *Server {
-
-	router := NewRouter(cors, routes...)
-
-	s := &http.Server{
-		Addr:    addr,
-		Handler: router,
-	}
-
 	logs.L().Info(
 		"http server created",
 		logs.Component("http"),
@@ -36,7 +31,9 @@ func NewServer(
 
 	return &Server{
 		name:   name,
-		server: s,
+		addr:   addr,
+		cors:   cors,
+		routes: routes,
 	}
 }
 
@@ -45,8 +42,14 @@ func (s *Server) Name() string {
 }
 
 func (s *Server) Start() error {
+	router := NewRouter(s.cors, s.routes...)
 
-	serverAddr := "localhost" + s.server.Addr
+	s.server = &stdHttp.Server{
+		Addr:    s.addr,
+		Handler: router,
+	}
+
+	serverAddr := "localhost" + s.addr
 
 	logs.L().Info(
 		"http server starting",
@@ -56,9 +59,7 @@ func (s *Server) Start() error {
 	)
 
 	err := s.server.ListenAndServe()
-
-	if err != nil && err != http.ErrServerClosed {
-
+	if err != nil && err != stdHttp.ErrServerClosed {
 		logs.L().Error(
 			"http server failed",
 			logs.Component("http"),
@@ -77,6 +78,9 @@ func (s *Server) Start() error {
 }
 
 func (s *Server) Shutdown(ctx context.Context) error {
+	if s.server == nil {
+		return nil
+	}
 
 	logs.L().Info(
 		"http server shutting down",

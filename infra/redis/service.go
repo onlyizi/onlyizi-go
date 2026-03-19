@@ -17,9 +17,7 @@ type Service struct {
 }
 
 func New() app.Service {
-	return &Service{
-		cfg: config.RedisConfig(),
-	}
+	return &Service{}
 }
 
 func (s *Service) Name() string {
@@ -27,12 +25,13 @@ func (s *Service) Name() string {
 }
 
 func (s *Service) Start() error {
+	cfg := config.RedisConfig()
 
-	addr := fmt.Sprintf("%s:%d", s.cfg.Host, s.cfg.Port)
+	addr := fmt.Sprintf("%s:%d", cfg.Host, cfg.Port)
 
 	rdb := redis.NewClient(&redis.Options{
 		Addr:         addr,
-		Password:     s.cfg.Password,
+		Password:     cfg.Password,
 		DialTimeout:  5 * time.Second,
 		ReadTimeout:  3 * time.Second,
 		WriteTimeout: 3 * time.Second,
@@ -50,8 +49,8 @@ func (s *Service) Start() error {
 	logs.L().Info(
 		"redis connected",
 		logs.Component("redis"),
-		logs.Field("host", s.cfg.Host),
-		logs.Field("port", s.cfg.Port),
+		logs.Field("host", cfg.Host),
+		logs.Field("port", cfg.Port),
 	)
 
 	return nil

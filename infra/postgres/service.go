@@ -13,14 +13,10 @@ import (
 	"github.com/onlyizi/onlyizi-go/observability/logs"
 )
 
-type Service struct {
-	cfg config.Postgres
-}
+type Service struct{}
 
 func New() app.Service {
-	return &Service{
-		cfg: config.PostgresConfig(),
-	}
+	return &Service{}
 }
 
 func (s *Service) Name() string {
@@ -28,14 +24,15 @@ func (s *Service) Name() string {
 }
 
 func (s *Service) Start() error {
+	cfg := config.PostgresConfig()
 
 	dsn := fmt.Sprintf(
 		"host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
-		s.cfg.Host,
-		s.cfg.Port,
-		s.cfg.User,
-		s.cfg.Password,
-		s.cfg.DB,
+		cfg.Host,
+		cfg.Port,
+		cfg.User,
+		cfg.Password,
+		cfg.DB,
 	)
 
 	conn, err := sql.Open("pgx", dsn)
@@ -59,16 +56,15 @@ func (s *Service) Start() error {
 	logs.L().Info(
 		"postgres connected",
 		logs.Component("postgres"),
-		logs.Field("host", s.cfg.Host),
-		logs.Field("port", s.cfg.Port),
-		logs.Field("database", s.cfg.DB),
+		logs.Field("host", cfg.Host),
+		logs.Field("port", cfg.Port),
+		logs.Field("database", cfg.DB),
 	)
 
 	return nil
 }
 
 func (s *Service) Shutdown(ctx context.Context) error {
-
 	if db == nil {
 		return nil
 	}
