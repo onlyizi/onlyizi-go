@@ -16,42 +16,49 @@ type CORSConfig struct {
 }
 
 func CORSMiddleware(cfg CORSConfig) func(http.Handler) http.Handler {
-
-	allowOrigins := strings.Join(cfg.AllowOrigins, ", ")
-	allowMethods := strings.Join(cfg.AllowMethods, ", ")
-	allowHeaders := strings.Join(cfg.AllowHeaders, ", ")
-	exposeHeaders := strings.Join(cfg.ExposeHeaders, ", ")
+	allowedOrigins := make(map[string]struct{}, len(cfg.AllowOrigins))
+	for _, o := range cfg.AllowOrigins {
+		allowedOrigins[o] = struct{}{}
+	}
 
 	return func(next http.Handler) http.Handler {
-
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
-			if allowOrigins != "" {
-				w.Header().Set("Access-Control-Allow-Origin", allowOrigins)
-			}
+			origin := r.Header.Get("Origin")
 
-			if allowMethods != "" {
-				w.Header().Set("Access-Control-Allow-Methods", allowMethods)
-			}
+			_, allowed := allowedOrigins[origin]
 
-			if allowHeaders != "" {
-				w.Header().Set("Access-Control-Allow-Headers", allowHeaders)
-			}
+			if allowed {
+				w.Header().Set("Access-Control-Allow-Origin", origin)
+				w.Header().Add("Vary", "Origin")
 
-			if exposeHeaders != "" {
-				w.Header().Set("Access-Control-Expose-Headers", exposeHeaders)
-			}
+				if cfg.AllowCredentials {
+					w.Header().Set("Access-Control-Allow-Credentials", "true")
+				}
 
-			if cfg.AllowCredentials {
-				w.Header().Set("Access-Control-Allow-Credentials", "true")
-			}
+				if len(cfg.AllowMethods) > 0 {
+					w.Header().Set("Access-Control-Allow-Methods", strings.Join(cfg.AllowMethods, ", "))
+				}
 
-			if cfg.MaxAge > 0 {
-				w.Header().Set("Access-Control-Max-Age", cfg.MaxAge.String())
+				if len(cfg.AllowHeaders) > 0 {
+					w.Header().Set("Access-Control-Allow-Headers", strings.Join(cfg.AllowHeaders, ", "))
+				}
+
+				if len(cfg.ExposeHeaders) > 0 {
+					w.Header().Set("Access-Control-Expose-Headers", strings.Join(cfg.ExposeHeaders, ", "))
+				}
+
+				if cfg.MaxAge > 0 {
+					w.Header().Set("Access-Control-Max-Age", cfg.MaxAge.String())
+				}
 			}
 
 			if r.Method == http.MethodOptions {
-				w.WriteHeader(http.StatusNoContent)
+				if allowed {
+					w.WriteHeader(http.StatusNoContent)
+				} else {
+					w.WriteHeader(http.StatusForbidden)
+				}
 				return
 			}
 
