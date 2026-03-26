@@ -15,6 +15,8 @@ type Server struct {
 	cors   middlewares.CORSConfig
 	routes []RegisterRoutes
 	server *stdHttp.Server
+
+	docs *serverSwagger.Config // 👈 config opcional de docs
 }
 
 func NewServer(
@@ -42,8 +44,17 @@ func (s *Server) Name() string {
 	return s.name
 }
 
+func (s *Server) WithDocs(cfg serverSwagger.Config) {
+	s.docs = &cfg
+}
+
 func (s *Server) Start() error {
 	router := NewRouter(s.cors, s.routes...)
+
+	// 👇 aplica docs aqui (ponto correto)
+	if s.docs != nil {
+		serverSwagger.Setup(router, *s.docs)
+	}
 
 	s.server = &stdHttp.Server{
 		Addr:    s.addr,
@@ -90,11 +101,4 @@ func (s *Server) Shutdown(ctx context.Context) error {
 	)
 
 	return s.server.Shutdown(ctx)
-}
-
-func (s *Server) WithDocs(cfg serverSwagger.DocsConfig) {
-	serverSwagger.Setup(s.router, serverSwagger.Config{
-		Title: cfg.Title,
-		Path:  cfg.Path,
-	})
 }

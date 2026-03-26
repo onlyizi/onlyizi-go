@@ -122,3 +122,9 @@ Grafana consulta os três:
     - loki
     - jaeger
     - prometheus
+
+## Swagger
+
+Rotas disponibilizados:
+`GET /swagger/index.html`
+`GET /docs   (ou o Path que você definir)`

@@ -5,7 +5,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/onlyizi/onlyizi-go/http/middlewares"
-	serverSwagger "github.com/onlyizi/onlyizi-go/http/swagger"
 	"github.com/onlyizi/onlyizi-go/observability/metrics"
 )
 
@@ -48,8 +47,4 @@ func standardRoutes(router *gin.Engine) {
 		middlewares.MetricsIPAllowlist([]string{"127.0.0.1", "::1"}),
 		gin.WrapH(metrics.Handler()),
 	)
-
-	serverSwagger.Setup(router, serverSwagger.Config{
-		Title: "Example Api",
-	})
 }

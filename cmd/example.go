@@ -12,6 +12,7 @@ import (
 	"github.com/onlyizi/onlyizi-go/errors"
 	onlyiziHttp "github.com/onlyizi/onlyizi-go/http"
 	"github.com/onlyizi/onlyizi-go/http/middlewares"
+	serverSwagger "github.com/onlyizi/onlyizi-go/http/swagger"
 	"github.com/onlyizi/onlyizi-go/infra/postgres"
 	"github.com/onlyizi/onlyizi-go/infra/redis"
 	"github.com/onlyizi/onlyizi-go/observability"
@@ -154,6 +155,11 @@ func main() {
 			Name: service.Name + "-http",
 			Addr: ":" + strconv.Itoa(httpCfg.Port),
 			CORS: cors,
+			Docs: &serverSwagger.DocsConfig{
+				Enabled: true,
+				Title:   "Example teste teste",
+				Path:    "/docs",
+			},
 			Routes: []onlyiziHttp.RegisterRoutes{
 				registerRoutes,
 			},
