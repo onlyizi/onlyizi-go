@@ -5,6 +5,7 @@ import (
 	stdHttp "net/http"
 
 	"github.com/onlyizi/onlyizi-go/http/middlewares"
+	serverSwagger "github.com/onlyizi/onlyizi-go/http/swagger"
 	"github.com/onlyizi/onlyizi-go/observability/logs"
 )
 
@@ -14,6 +15,8 @@ type Server struct {
 	cors   middlewares.CORSConfig
 	routes []RegisterRoutes
 	server *stdHttp.Server
+
+	docs *serverSwagger.Config // 👈 config opcional de docs
 }
 
 func NewServer(
@@ -41,8 +44,17 @@ func (s *Server) Name() string {
 	return s.name
 }
 
+func (s *Server) WithDocs(cfg serverSwagger.Config) {
+	s.docs = &cfg
+}
+
 func (s *Server) Start() error {
 	router := NewRouter(s.cors, s.routes...)
+
+	// 👇 aplica docs aqui (ponto correto)
+	if s.docs != nil {
+		serverSwagger.Setup(router, *s.docs)
+	}
 
 	s.server = &stdHttp.Server{
 		Addr:    s.addr,

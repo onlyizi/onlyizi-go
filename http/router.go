@@ -30,12 +30,18 @@ func NewRouter(cors middlewares.CORSConfig, routes ...RegisterRoutes) *gin.Engin
 
 func standardRoutes(router *gin.Engine) {
 
+	// Health godoc
+	// @Summary Return health of api
+	// @Router /health [get]
 	router.GET("/health", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"status": "ok",
 		})
 	})
 
+	// Metrics godoc
+	// @Summary Return metrics of api
+	// @Router /metrics [get]
 	router.GET(
 		"/metrics",
 		middlewares.MetricsIPAllowlist([]string{"127.0.0.1", "::1"}),

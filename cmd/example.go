@@ -12,9 +12,12 @@ import (
 	"github.com/onlyizi/onlyizi-go/errors"
 	onlyiziHttp "github.com/onlyizi/onlyizi-go/http"
 	"github.com/onlyizi/onlyizi-go/http/middlewares"
+	serverSwagger "github.com/onlyizi/onlyizi-go/http/swagger"
 	"github.com/onlyizi/onlyizi-go/infra/postgres"
 	"github.com/onlyizi/onlyizi-go/infra/redis"
 	"github.com/onlyizi/onlyizi-go/observability"
+
+	_ "github.com/onlyizi/onlyizi-go/docs"
 )
 
 /*
@@ -66,6 +69,8 @@ Este exemplo continua mostrando explicitamente as rotas e os serviços
 utilizados, mas transfere para a biblioteca o controle do lifecycle da aplicação.
 */
 
+// @Title Onlyizi Example Api
+// @Description Essa é uma api de exemplo
 func main() {
 	/*
 		Lemos as configurações básicas do serviço e do HTTP.
@@ -150,6 +155,11 @@ func main() {
 			Name: service.Name + "-http",
 			Addr: ":" + strconv.Itoa(httpCfg.Port),
 			CORS: cors,
+			Docs: &serverSwagger.DocsConfig{
+				Enabled: true,
+				Title:   "Example teste teste",
+				Path:    "/docs",
+			},
 			Routes: []onlyiziHttp.RegisterRoutes{
 				registerRoutes,
 			},

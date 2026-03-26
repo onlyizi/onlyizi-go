@@ -5,6 +5,7 @@ import (
 	"github.com/onlyizi/onlyizi-go/config"
 	onlyiziHttp "github.com/onlyizi/onlyizi-go/http"
 	"github.com/onlyizi/onlyizi-go/http/middlewares"
+	serverSwagger "github.com/onlyizi/onlyizi-go/http/swagger"
 	"github.com/onlyizi/onlyizi-go/observability"
 )
 
@@ -13,6 +14,7 @@ type HTTPConfig struct {
 	Addr   string
 	CORS   middlewares.CORSConfig
 	Routes []onlyiziHttp.RegisterRoutes
+	Docs   *serverSwagger.DocsConfig
 }
 
 type Config struct {
@@ -42,6 +44,13 @@ func Start(cfg Config) error {
 			cfg.HTTP.CORS,
 			cfg.HTTP.Routes...,
 		)
+
+		if cfg.HTTP.Docs != nil && cfg.HTTP.Docs.Enabled {
+			httpServer.WithDocs(serverSwagger.Config{
+				Title: cfg.HTTP.Docs.Title,
+				Path:  cfg.HTTP.Docs.Path,
+			})
+		}
 
 		runtime = append(runtime, httpServer)
 	}
