@@ -46,10 +46,7 @@ func Start(cfg Config) error {
 		)
 
 		if cfg.HTTP.Docs != nil && cfg.HTTP.Docs.Enabled {
-			httpServer.WithDocs(serverSwagger.Config{
-				Title: cfg.HTTP.Docs.Title,
-				Path:  cfg.HTTP.Docs.Path,
-			})
+			httpServer.WithDocs(*cfg.HTTP.Docs)
 		}
 
 		runtime = append(runtime, httpServer)

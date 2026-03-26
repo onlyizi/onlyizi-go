@@ -157,8 +157,9 @@ func main() {
 			CORS: cors,
 			Docs: &serverSwagger.DocsConfig{
 				Enabled: true,
-				Title:   "Example teste teste",
+				Title:   "Onlyizi library",
 				Path:    "/docs",
+				Product: "Library API",
 			},
 			Routes: []onlyiziHttp.RegisterRoutes{
 				registerRoutes,
