@@ -16,7 +16,7 @@ type Server struct {
 	routes []RegisterRoutes
 	server *stdHttp.Server
 
-	docs *serverSwagger.Config // 👈 config opcional de docs
+	docs *serverSwagger.DocsConfig
 }
 
 func NewServer(
@@ -44,7 +44,7 @@ func (s *Server) Name() string {
 	return s.name
 }
 
-func (s *Server) WithDocs(cfg serverSwagger.Config) {
+func (s *Server) WithDocs(cfg serverSwagger.DocsConfig) {
 	s.docs = &cfg
 }
 

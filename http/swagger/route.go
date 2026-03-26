@@ -6,13 +6,11 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
-type Config struct {
-	Title   string
-	SpecURL string
-	Path    string
-}
+func Setup(router *gin.Engine, cfg DocsConfig) {
+	if !cfg.Enabled {
+		return
+	}
 
-func Setup(router *gin.Engine, cfg Config) {
 	if cfg.Path == "" {
 		cfg.Path = "/docs"
 	}
@@ -25,6 +23,7 @@ func Setup(router *gin.Engine, cfg Config) {
 		cfg.Title = "API Docs"
 	}
 
+	router.Static("/docs/assets", "./http/swagger/assets")
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	router.GET(cfg.Path, redocHandler(cfg))
 }
