@@ -15,6 +15,8 @@ import (
 	"github.com/onlyizi/onlyizi-go/infra/postgres"
 	"github.com/onlyizi/onlyizi-go/infra/redis"
 	"github.com/onlyizi/onlyizi-go/observability"
+
+	_ "github.com/onlyizi/onlyizi-go/docs"
 )
 
 /*
@@ -66,6 +68,8 @@ Este exemplo continua mostrando explicitamente as rotas e os serviços
 utilizados, mas transfere para a biblioteca o controle do lifecycle da aplicação.
 */
 
+// @Title Onlyizi Example Api
+// @Description Essa é uma api de exemplo
 func main() {
 	/*
 		Lemos as configurações básicas do serviço e do HTTP.

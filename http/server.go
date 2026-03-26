@@ -5,6 +5,7 @@ import (
 	stdHttp "net/http"
 
 	"github.com/onlyizi/onlyizi-go/http/middlewares"
+	serverSwagger "github.com/onlyizi/onlyizi-go/http/swagger"
 	"github.com/onlyizi/onlyizi-go/observability/logs"
 )
 
@@ -89,4 +90,11 @@ func (s *Server) Shutdown(ctx context.Context) error {
 	)
 
 	return s.server.Shutdown(ctx)
+}
+
+func (s *Server) WithDocs(cfg serverSwagger.DocsConfig) {
+	serverSwagger.Setup(s.router, serverSwagger.Config{
+		Title: cfg.Title,
+		Path:  cfg.Path,
+	})
 }

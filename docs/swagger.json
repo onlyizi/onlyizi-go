@@ -1,0 +1,9 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "Essa é uma api de exemplo",
+        "title": "Onlyizi Example Api",
+        "contact": {}
+    },
+    "paths": {}
+}
