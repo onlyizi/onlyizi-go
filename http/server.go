@@ -12,7 +12,7 @@ import (
 type Server struct {
 	name   string
 	addr   string
-	cors   middlewares.CORSConfig
+	cors   *middlewares.CORSConfig
 	routes []RegisterRoutes
 	server *stdHttp.Server
 
@@ -22,7 +22,7 @@ type Server struct {
 func NewServer(
 	name string,
 	addr string,
-	cors middlewares.CORSConfig,
+	cors *middlewares.CORSConfig,
 	routes ...RegisterRoutes,
 ) *Server {
 	logs.L().Info(

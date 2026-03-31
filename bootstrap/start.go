@@ -12,7 +12,7 @@ import (
 type HTTPConfig struct {
 	Name   string
 	Addr   string
-	CORS   middlewares.CORSConfig
+	CORS   *middlewares.CORSConfig
 	Routes []onlyiziHttp.RegisterRoutes
 	Docs   *serverSwagger.DocsConfig
 }
