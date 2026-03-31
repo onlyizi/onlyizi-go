@@ -10,13 +10,16 @@ import (
 
 type RegisterRoutes func(*gin.Engine)
 
-func NewRouter(cors middlewares.CORSConfig, routes ...RegisterRoutes) *gin.Engine {
+func NewRouter(cors *middlewares.CORSConfig, routes ...RegisterRoutes) *gin.Engine {
 	router := gin.New()
 
 	router.Use(gin.Recovery())
-
-	router.Use(GinMiddleware(middlewares.CORSMiddleware(cors)))
 	router.Use(GinMiddleware(middlewares.ObservabilityMiddleware))
+
+	if cors != nil {
+		router.Use(GinMiddleware(middlewares.CORSMiddleware(*cors)))
+	}
+
 	router.Use(middlewares.ErrorHandlerMiddleware())
 
 	standardRoutes(router)

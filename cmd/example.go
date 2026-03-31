@@ -11,7 +11,6 @@ import (
 	"github.com/onlyizi/onlyizi-go/config"
 	"github.com/onlyizi/onlyizi-go/errors"
 	onlyiziHttp "github.com/onlyizi/onlyizi-go/http"
-	"github.com/onlyizi/onlyizi-go/http/middlewares"
 	serverSwagger "github.com/onlyizi/onlyizi-go/http/swagger"
 	"github.com/onlyizi/onlyizi-go/infra/postgres"
 	"github.com/onlyizi/onlyizi-go/infra/redis"
@@ -94,23 +93,23 @@ func main() {
 		Esse bloco representa a configuração de infraestrutura HTTP da aplicação,
 		e não a lógica de negócio em si.
 	*/
-	cors := middlewares.CORSConfig{
-		AllowOrigins: []string{
-			"http://localhost:3000",
-		},
-		AllowMethods: []string{
-			"GET",
-			"POST",
-			"PUT",
-			"DELETE",
-			"OPTIONS",
-		},
-		AllowHeaders: []string{
-			"Content-Type",
-			"Authorization",
-		},
-		AllowCredentials: true,
-	}
+	// cors := middlewares.CORSConfig{
+	// 	AllowOrigins: []string{
+	// 		"http://localhost:3000",
+	// 	},
+	// 	AllowMethods: []string{
+	// 		"GET",
+	// 		"POST",
+	// 		"PUT",
+	// 		"DELETE",
+	// 		"OPTIONS",
+	// 	},
+	// 	AllowHeaders: []string{
+	// 		"Content-Type",
+	// 		"Authorization",
+	// 	},
+	// 	AllowCredentials: true,
+	// }
 
 	/*
 		Chamamos bootstrap.Start para delegar à biblioteca o fluxo padronizado
@@ -154,7 +153,7 @@ func main() {
 		HTTP: &bootstrap.HTTPConfig{
 			Name: service.Name + "-http",
 			Addr: ":" + strconv.Itoa(httpCfg.Port),
-			CORS: cors,
+			CORS: nil,
 			Docs: &serverSwagger.DocsConfig{
 				Enabled: true,
 				Title:   "Onlyizi library",
