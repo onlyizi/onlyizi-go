@@ -2,6 +2,7 @@ package grpcClient
 
 import (
 	"context"
+	"sync"
 
 	"github.com/onlyizi/onlyizi-go/grpc/interceptors"
 	"github.com/onlyizi/onlyizi-go/observability/logs"
@@ -13,6 +14,7 @@ type Client struct {
 	name    string
 	address string
 	conn    *grpc.ClientConn
+	mu      sync.Mutex
 }
 
 func NewClient(name, address string) *Client {
@@ -27,6 +29,27 @@ func (c *Client) Name() string {
 }
 
 func (c *Client) Start() error {
+	logs.L().Info("grpc client initialized",
+		logs.Field("name", c.name),
+		logs.Field("address", c.address),
+	)
+
+	return nil
+}
+
+func (c *Client) getConn() (*grpc.ClientConn, error) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
+	if c.conn != nil {
+		return c.conn, nil
+	}
+
+	logs.L().Info("grpc dialing (lazy)...",
+		logs.Field("name", c.name),
+		logs.Field("address", c.address),
+	)
+
 	conn, err := grpc.Dial(
 		c.address,
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
@@ -38,19 +61,19 @@ func (c *Client) Start() error {
 	)
 
 	if err != nil {
-		logs.L().Error("grpc dial failed", logs.Err(err))
-		return nil
+		logs.L().Error("grpc dial failed",
+			logs.Field("name", c.name),
+			logs.Err(err),
+		)
+		return nil, err
 	}
 
 	c.conn = conn
+	return conn, nil
+}
 
-	logs.L().Info("grpc client ready",
-		logs.Component("grpc"),
-		logs.Field("name", c.name),
-		logs.Field("address", c.address),
-	)
-
-	return nil
+func (c *Client) Conn() (*grpc.ClientConn, error) {
+	return c.getConn()
 }
 
 func (c *Client) Shutdown(ctx context.Context) error {
@@ -58,8 +81,4 @@ func (c *Client) Shutdown(ctx context.Context) error {
 		return c.conn.Close()
 	}
 	return nil
-}
-
-func (c *Client) Conn() *grpc.ClientConn {
-	return c.conn
 }
