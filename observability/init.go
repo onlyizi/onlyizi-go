@@ -30,6 +30,10 @@ func Init(cfg Config) error {
 		return err
 	}
 
+	if err := metrics.InitRPC(cfg.ServiceName); err != nil {
+		return err
+	}
+
 	logs.L().Info("metrics initialized")
 
 	if err := metrics.InitHTTP(cfg.ServiceName); err != nil {

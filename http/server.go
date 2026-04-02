@@ -51,7 +51,6 @@ func (s *Server) WithDocs(cfg serverSwagger.DocsConfig) {
 func (s *Server) Start() error {
 	router := NewRouter(s.cors, s.routes...)
 
-	// 👇 aplica docs aqui (ponto correto)
 	if s.docs != nil {
 		serverSwagger.Setup(router, *s.docs)
 	}

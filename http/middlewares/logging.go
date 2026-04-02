@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	obsctx "github.com/onlyizi/onlyizi-go/observability/context"
 	"github.com/onlyizi/onlyizi-go/observability/logs"
 	"github.com/onlyizi/onlyizi-go/observability/metrics"
 )
@@ -20,7 +21,10 @@ func ObservabilityMiddleware(next http.Handler) http.Handler {
 			logs.RequestID(reqID),
 		)
 
-		ctx := logs.WithLogger(r.Context(), logger)
+		ctx := r.Context()
+
+		ctx = obsctx.WithRequestID(ctx, reqID)
+		ctx = logs.WithLogger(ctx, logger)
 
 		w.Header().Set("X-Request-ID", reqID)
 
@@ -42,7 +46,6 @@ func ObservabilityMiddleware(next http.Handler) http.Handler {
 
 		duration := time.Since(start)
 
-		// 🔹 MÉTRICAS
 		metrics.RecordHTTPRequest(
 			ctx,
 			r.Method,
