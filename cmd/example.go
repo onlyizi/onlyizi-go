@@ -5,11 +5,14 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"google.golang.org/grpc"
 
 	"github.com/onlyizi/onlyizi-go/app"
 	"github.com/onlyizi/onlyizi-go/bootstrap"
 	"github.com/onlyizi/onlyizi-go/config"
 	"github.com/onlyizi/onlyizi-go/errors"
+	grpcClient "github.com/onlyizi/onlyizi-go/grpc/client"
+	grpcServer "github.com/onlyizi/onlyizi-go/grpc/server"
 	onlyiziHttp "github.com/onlyizi/onlyizi-go/http"
 	serverSwagger "github.com/onlyizi/onlyizi-go/http/swagger"
 	"github.com/onlyizi/onlyizi-go/infra/postgres"
@@ -136,6 +139,16 @@ func main() {
 		Isso evita problemas em que rotas, middlewares ou handlers tentam usar
 		dependências que ainda não foram conectadas.
 	*/
+
+	grpcClient := grpcClient.NewClient("core", "localhost:50051")
+	grpcSrv := grpcServer.NewServer(
+		"example-grpc",
+		":50052",
+		func(s *grpc.Server) {
+			// pb.RegisterExampleServiceServer(s, handler)
+		},
+	)
+
 	err := bootstrap.Start(bootstrap.Config{
 		EnvFile: ".env.example",
 
@@ -148,6 +161,10 @@ func main() {
 		Bootstrap: []app.Service{
 			postgres.New(),
 			redis.New(),
+			grpcClient,
+		},
+		Runtime: []app.Service{
+			grpcSrv,
 		},
 
 		HTTP: &bootstrap.HTTPConfig{
