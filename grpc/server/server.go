@@ -33,6 +33,10 @@ func (s *Server) Name() string {
 func (s *Server) Start() error {
 	lis, err := net.Listen("tcp", s.addr)
 	if err != nil {
+		logs.L().Error("grpc listen failed",
+			logs.Field("addr", s.addr),
+			logs.Err(err),
+		)
 		return err
 	}
 
@@ -48,15 +52,16 @@ func (s *Server) Start() error {
 		register(s.server)
 	}
 
-	logs.L().Info("grpc server starting",
-		logs.Component("grpc"),
+	logs.L().Info("grpc server listening 🚀",
 		logs.Field("name", s.name),
 		logs.Field("addr", s.addr),
 	)
 
 	go func() {
 		if err := s.server.Serve(lis); err != nil {
-			logs.L().Error("grpc server stopped", logs.Err(err))
+			logs.L().Error("grpc server crashed",
+				logs.Err(err),
+			)
 		}
 	}()
 
